@@ -3,7 +3,7 @@ import { analyzeGynecomastiaImage } from '../../../lib/openai';
 
 export async function POST(request) {
   try {
-    const { imageBase64 } = await request.json();
+    const { imageBase64, imageBase64Second } = await request.json();
 
     if (!imageBase64) {
       return NextResponse.json(
@@ -12,7 +12,10 @@ export async function POST(request) {
       );
     }
 
-    const analysis = await analyzeGynecomastiaImage({ imageBase64 });
+    const analysis = await analyzeGynecomastiaImage({
+      imageBase64,
+      imageBase64Second,
+    });
     return NextResponse.json(analysis);
   } catch (error) {
     return NextResponse.json(

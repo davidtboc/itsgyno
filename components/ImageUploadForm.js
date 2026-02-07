@@ -6,12 +6,19 @@ import { useRouter } from 'next/navigation';
 export default function ImageUploadForm() {
   const router = useRouter();
   const [file, setFile] = useState(null);
+  const [secondFile, setSecondFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files?.[0];
     setFile(selectedFile || null);
+    setError('');
+  };
+
+  const handleSecondFileChange = (event) => {
+    const selectedFile = event.target.files?.[0];
+    setSecondFile(selectedFile || null);
     setError('');
   };
 
@@ -36,13 +43,19 @@ export default function ImageUploadForm() {
       setError('');
 
       const imageBase64 = await convertToBase64(file);
+      const imageBase64Second = secondFile
+        ? await convertToBase64(secondFile)
+        : null;
 
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ imageBase64 }),
+        body: JSON.stringify({
+          imageBase64,
+          imageBase64Second,
+        }),
       });
 
       if (!response.ok) {
@@ -67,6 +80,13 @@ export default function ImageUploadForm() {
     <form className="upload-form" onSubmit={handleSubmit}>
       <label htmlFor="image">Upload image</label>
       <input id="image" type="file" accept="image/*" onChange={handleFileChange} />
+      <label htmlFor="image-second">Upload second image (optional)</label>
+      <input
+        id="image-second"
+        type="file"
+        accept="image/*"
+        onChange={handleSecondFileChange}
+      />
       <button type="submit" disabled={loading}>
         {loading ? 'Analyzing...' : 'Submit'}
       </button>
