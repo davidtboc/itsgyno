@@ -106,6 +106,58 @@ button:disabled {
   font-weight: 600;
 }
 
+.checkout-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+}
+
+.checkout-panel {
+  width: min(720px, 100%);
+  background: hsl(var(--card));
+  border-radius: calc(var(--radius) + 4px);
+  border: 1px solid hsl(var(--border));
+  padding: 20px 20px 24px;
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.25);
+}
+
+.checkout-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.checkout-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.checkout-close {
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--foreground));
+}
+
+.checkout-subtitle {
+  margin-top: 6px;
+}
+
+.checkout-status {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.checkout-container {
+  margin-top: 16px;
+  min-height: 520px;
+}
+
 .verdict {
   font-size: 1.25rem;
   font-weight: 700;

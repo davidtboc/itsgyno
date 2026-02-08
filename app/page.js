@@ -6,7 +6,7 @@ export default function HomePage() {
       <div className="page-layout">
         <section className="primary-content">
           <h1>Gynecomastia Image Analysis</h1>
-          <p>Upload a chest image and get an AI-based gynecomastia assessment.</p>
+          <p>Upload a chest image and get a gynecomastia assessment.</p>
           <ImageUploadForm />
         </section>
         <aside className="sponsor-banner" aria-label="Sponsor banner">
