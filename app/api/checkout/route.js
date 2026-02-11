@@ -33,13 +33,20 @@ export async function POST(request) {
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      ui_mode: 'embedded',
       line_items: [{ price: priceId, quantity: 1 }],
-      redirect_on_completion: 'never',
+      success_url: `${origin}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/?payment=cancel`,
     });
 
+    if (!session.url) {
+      return NextResponse.json(
+        { error: 'Stripe did not return a checkout URL.' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
-      clientSecret: session.client_secret,
+      url: session.url,
       sessionId: session.id,
     });
   } catch (error) {
