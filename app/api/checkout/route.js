@@ -3,6 +3,26 @@ import stripe from '../../../lib/stripe';
 
 export const runtime = 'nodejs';
 
+function resolveOrigin(request) {
+  const configuredOrigin = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_BASE_URL;
+  if (configuredOrigin) {
+    return configuredOrigin;
+  }
+
+  const originHeader = request.headers.get('origin');
+  if (originHeader) {
+    return originHeader;
+  }
+
+  const host = request.headers.get('host');
+  if (!host) {
+    return '';
+  }
+
+  const protocol = host.includes('localhost') ? 'http' : 'https';
+  return `${protocol}://${host}`;
+}
+
 export async function POST(request) {
   try {
     const priceId = process.env.STRIPE_PRICE_ID;
@@ -14,15 +34,7 @@ export async function POST(request) {
       );
     }
 
-    const originHeader = request.headers.get('origin');
-    const host = request.headers.get('host');
-    const protocol = host && host.includes('localhost') ? 'http' : 'https';
-    const fallbackOrigin = host ? `${protocol}://${host}` : '';
-    const origin =
-      originHeader ||
-      fallbackOrigin ||
-      process.env.NEXT_PUBLIC_APP_URL ||
-      process.env.NEXT_PUBLIC_BASE_URL;
+    const origin = resolveOrigin(request);
 
     if (!origin) {
       return NextResponse.json(
@@ -34,6 +46,9 @@ export async function POST(request) {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
+      metadata: {
+        purpose: 'gyno_analysis',
+      },
       success_url: `${origin}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?payment=cancel`,
     });

@@ -27,7 +27,14 @@ export async function POST(request) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    console.info('Checkout session completed:', session.id);
+    if (session.payment_status === 'paid') {
+      console.info('Checkout session paid:', session.id);
+    }
+  }
+
+  if (event.type === 'checkout.session.async_payment_failed') {
+    const session = event.data.object;
+    console.warn('Checkout async payment failed:', session.id);
   }
 
   return NextResponse.json({ received: true });
